@@ -18,6 +18,7 @@ Indice(SQL en linux)
         6.2_funciones numericas
         6.3_funciones fecha
         6.4 funciones flujo control
+    7_Restricciones
 */
 
 /*
@@ -132,5 +133,85 @@ Indice(SQL en linux)
 */
 
 
+
+/*
+=========================================================================================
+7_Restricciones
+    - LImita datos almacenados
+    - Garantiza exactitud, validez e integridad
+    - TIPOS:
+        NOT NULL → El campo no puede ser NULL
+        UNIQUE → Valor único, no se puede repetir
+        PRIMARY KEY → Campo único y obligatorio (ni repetido ni NULL), como el DNI
+        DEFAULT → Valor por defecto si no se da otro
+        CHECK → Valida que el dato cumpla una condición (ej: edad > 0)
+        FOREIGN KEY → Conecta con otra tabla, asegura relaciones válidas entre datos
+
+
+        Ejercicio:
+            id          int             clave primaria, auto incremento     PRIMARY KEY, AUTO_INCREMENT
+            name        varchar(10)     No nulo, único                      NOT NULL, UNIQUE (el contador avanza)
+            age         int             mayor que 0 y menor igual a 120     CHECK
+            status      char(1)         si no se especifica, por defecto 1  DEFAULT
+            gender      char(1)         Sin restrincciones
+
+
+            **Vamos a crear la bd3 y nueva tabla
+
+            create table user(
+                        id int unsigned primary key  auto_increment,
+                        name varchar(10) not null unique,
+                        age int unsigned check(age>0 and age <= 120),
+                        status char(1) default '1',
+                        gender char(1)  
+            );
+            insert into user (name, age, status, gender) values ('TOM', 22, '1', 'M'),
+                                                        ('TOMas', 80, '0', 'M'); --id por defecto
+            insert into user (name, age, status, gender) values (null, 22, '1', 'M');  --error
+            insert into user (name, age, status, gender) values ('TOM', 24, '1', 'M');  --nombre duplicado, ya existe
+            insert into user (name, age, status, gender) values ('TOMhx', 24, '1', 'M');
+                1,TOM,22,1,M
+                2,TOMas,80,0,M
+                4,TOMhx,24,1,M  -- ha saltado id3 porque antes da error el segundo TOM, pero se ha guardado
+            insert into user (name, age, status, gender) values ('TOM5', -4, '1', 'M');  --error    
+            insert into user (name, age, gender) values ('TOM5', 44, 'M');  --correcto
+
+        Ejercicio:
+            
+            create table empleadosy(
+                id int auto_increment primary key,
+                name varchar(50) not null,
+                age int unsigned,
+                job varchar(20),
+                salary int,
+                date date,
+                managerid int,
+                dept_id int
+            );
+            insert into empleadosy(name, age, job, salary, date, managerid, dept_id) values
+                                ('ana', 30, 'CEO',60000, '2000-01-01', null, 5),
+                                ('anas', 35, 'limpieza',5000, '2002-01-01', 1, 1),
+                                ('ana1', 40, 'animador',12500, '2040-01-01', 2, 1),
+                                ('anas1', 46, 'cocinero',10000, '2006-01-01', 1, 1),
+                                ('anax', 57, 'programador',40800, '2008-01-01', 3, 1),
+                                ('anay', 61, 'fabricador',140000, '2020-01-01', 2, 1);
+
+
+            create table dept(
+                id int auto_increment primary key,
+                name varchar(50) not null
+            );
+            insert into dept(name) values ('fabrica'),('innovacion'),('gestoria'), ('gerencia'), ('CEO');
+
+
+
+
+
+
+
+
+
+
+*/
 
 
