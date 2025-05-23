@@ -19,6 +19,8 @@ Indice(SQL en linux)
         6.3_funciones fecha
         6.4 funciones flujo control
     7_Restricciones
+        7.1_Restricciones enlaces externos
+        7.2_ELiminar/Actualizar
 */
 
 /*
@@ -136,7 +138,8 @@ Indice(SQL en linux)
 
 /*
 =========================================================================================
-7_Restricciones
+77.1_Restricciones enlaces externos
+.1_Restricciones enlaces externos
     - LImita datos almacenados
     - Garantiza exactitud, validez e integridad
     - TIPOS:
@@ -148,7 +151,7 @@ Indice(SQL en linux)
         FOREIGN KEY → Conecta con otra tabla, asegura relaciones válidas entre datos
 
 
-        Ejercicio:
+        ***Ejercicio:
             id          int             clave primaria, auto incremento     PRIMARY KEY, AUTO_INCREMENT
             name        varchar(10)     No nulo, único                      NOT NULL, UNIQUE (el contador avanza)
             age         int             mayor que 0 y menor igual a 120     CHECK
@@ -176,7 +179,8 @@ Indice(SQL en linux)
             insert into user (name, age, status, gender) values ('TOM5', -4, '1', 'M');  --error    
             insert into user (name, age, gender) values ('TOM5', 44, 'M');  --correcto
 
-        Ejercicio:
+
+        ***Ejercicio: por ejemplo de grupo 1 empleados y grupo5 jefes, si borramos la grupo58 dept en dept_id no será afectado
             
             create table empleadosy(
                 id int auto_increment primary key,
@@ -204,14 +208,54 @@ Indice(SQL en linux)
             insert into dept(name) values ('fabrica'),('innovacion'),('gestoria'), ('gerencia'), ('CEO');
 
 
+            Solucion: 
+                alter table empleadosy      modificar tabla
+                add constraint fk_empleadosy_dept_id        añadir restriccion
+                foreign key (dept_id)       clave que se relaciona con otra tabla
+                references dept(id)     conectar con esta tabla el elemento id
 
+                En dept_id a la izq hay una llave azul, qeu indica externo y id una llave amarillo que es la principal
+                si eliminamos dept id 5 saldrá error porque está el dato enlazada con otra tabla
 
-
-
-
-
-
-
+            Para eliminar el contacto:
+                alter table empleadosy
+                drop foreign key kf_empleadosy_dept_id;
+                  *ahora ya se puede eliminar dept y no sale error
 */
 
+/*
+================================================================================
+7.2_ELiminar/Actualiza
+
+    NO ACTION   --> AL actualizar el padre comprueba si hay clave hijos externos, si hay no permite
+    RESTRICT    --> Igual que no action, comprueba y prohibe borrar si se está usando
+    CASCADE     --> Si borra o actualiza el padre, el hijo tambien automaticameante
+    SET NULL    --> Si borra o actualiza el padre, el hijo se pone a null
+    SET DEFAULT --> Si borra el padre, el valor de hijo se pone por defecto
+
+
+        ALTER TABLE empleadosy
+            ADD CONSTRAINT fk_empleadosy_dept_id
+                FOREIGN KEY (dept_id)
+                    REFERENCES dept(id)
+                    ON UPDATE CASCADE
+                    ON DELETE CASCADE;
+
+        *En dept cambio el id 1 por 8 y en empleadosy se cambia automaticamente
+        *SI eliminamos el id 8 ahora, los usuarios de empleadosy cuyo id es 8 se borran
+
+
+
+        ALTER TABLE empleadosy
+        DROP FOREIGN KEY fk_empleadosy_dept_id;
+
+        ALTER TABLE empleadosy
+            ADD CONSTRAINT fk_empleadosy_dept_id
+                FOREIGN KEY (dept_id)
+                    REFERENCES dept(id)
+                    ON UPDATE set null
+                    ON DELETE set null;
+
+        *Al eliminar id 8, todos los empleadosy cuyo id es 8 se pone a null
+*/
 
